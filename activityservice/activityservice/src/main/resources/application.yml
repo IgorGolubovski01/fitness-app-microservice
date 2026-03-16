@@ -1,0 +1,12 @@
+#TODO change to port:8081 in user micro service
+
+spring:
+  application:
+    name: activityservice
+  mongodb:
+    uri: mongodb+srv://igor:ruznapanda01@cluster0.chqayo6.mongodb.net/
+    database: fitnessactivity
+
+server:
+  port: 8082
+
