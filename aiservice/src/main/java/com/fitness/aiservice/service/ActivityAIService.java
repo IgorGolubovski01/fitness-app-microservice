@@ -1,9 +1,12 @@
 package com.fitness.aiservice.service;
 
 import com.fitness.aiservice.model.Activity;
+import com.fitness.aiservice.model.Recommendation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
 
 import java.util.Objects;
 
@@ -18,7 +21,40 @@ public class ActivityAIService {
         String prompt = createPromptForActivity(activity);
         String aiResponse = geminiService.getAnswer(prompt);
         log.info("RESPONSE FROM AI: {}", aiResponse);
+
+        processAiResponse(activity, aiResponse);
         return aiResponse;
+    }
+
+    private void processAiResponse(Activity activity, String aiResponse) {
+        try{
+            ObjectMapper mapper = new ObjectMapper();
+            JsonNode rootNode = mapper.readTree(aiResponse);
+            JsonNode textNode = rootNode
+                    .path("candidates")
+                    .get(0)
+                    .path("content")
+                    .path("parts")
+                    .get(0)
+                    .path("text");
+
+            String jsonContent = textNode
+                    .asString()
+                    .replaceAll("```json\\n","")
+                    .replaceAll("\\n```","")
+                    .trim();
+
+            JsonNode analysisJson = mapper.readTree(jsonContent);
+            JsonNode analysisNode = analysisJson.path("analysis");
+            StringBuilder fullAnalysis = new StringBuilder();
+
+
+
+            log.info("analysisJson: {}",analysisJson);
+            log.info("\nanalysisNode: {}",analysisNode);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public String createPromptForActivity(Activity activity) {
@@ -29,7 +65,7 @@ public class ActivityAIService {
                         "overall": "Overall analysis here",
                         "pace": "Pace analysis here",
                         "heartRate": "Heart rate analysis here",
-                        "caloriesBurned": "Calories analysis here",
+                        "caloriesBurned": "Calories analysis here"
                     },
                     "improvements":[
                         {

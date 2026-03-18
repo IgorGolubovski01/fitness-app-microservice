@@ -39,7 +39,7 @@ public class GeminiService {
 
          String response = webClient
                 .post()
-            .uri(UriComponentsBuilder
+                .uri(UriComponentsBuilder
                 .fromUriString(geminiApiUrl)
                 .queryParam("key", geminiApiKey)
                 .build(true)
