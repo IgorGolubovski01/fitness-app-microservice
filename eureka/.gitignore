@@ -19,8 +19,10 @@ target/
 *.iml
 *.ipr
 src/main/resources/application.yml
-application.yaml
-application.yml
+application.*
+*.properties
+*.yaml
+*.yml
 
 
 ### NetBeans ###
